@@ -15,6 +15,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: bojanaandonova/movie-watchlist-backend:latest
     container_name: movie-watchlist-backend
     ports:
       - "5000:5000"
@@ -25,11 +26,13 @@ services:
       - mongodb
     networks:
       - movie-watchlist-network
+    
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: bojanaandonova/movie-watchlist-frontend:latest
     container_name: movie-watchlist-frontend
     ports:
       - "3000:80"
