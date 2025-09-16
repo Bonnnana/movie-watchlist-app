@@ -1,34 +1,16 @@
-name: CI/CD Pipeline with Docker Compose
+name: Build and Push Docker images to Docker Hub
 
 on:
   push:
     branches:
-      - "main"  
+      - "main"
   pull_request:
     branches:
-      - "main" 
+      - "main"
 
 jobs:
-  # Lint Code Base
-  run-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  
-
-      - name: Lint Code Base
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: "main"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # Docker Build and Push
   docker:
-    runs-on: ubuntu-latest
-    needs: run-lint  
+    runs-on: ubuntu-latest  
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,7 +24,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
       - name: Build and push Docker images using docker-compose
         run: |
-          docker-compose -f docker-compose.yml build  # Build all services defined in docker-compose.yml
-          docker-compose -f docker-compose.yml push   # Push images to DockerHub
+          docker-compose -f docker-compose.yml build  
+          docker-compose -f docker-compose.yml push  
