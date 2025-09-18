@@ -30,6 +30,12 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Build and push Docker images using docker-compose
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
+          MONGO_APP_USERNAME: ${{ secrets.MONGO_APP_USERNAME }}
+          MONGO_APP_PASSWORD: ${{ secrets.MONGO_APP_PASSWORD }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           docker-compose -f docker-compose.yml build  
           docker-compose -f docker-compose.yml push  
