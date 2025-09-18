@@ -31,11 +31,11 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
+          username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_PORT || 22 }}
+          port: 22
           script: |
-            cd ${{ secrets.APP_DIRECTORY || '/home/ubuntu/movie-watchlist-app' }}
+            cd '/home/ubuntu/movie-watchlist-app' 
             
             git pull origin main
             
