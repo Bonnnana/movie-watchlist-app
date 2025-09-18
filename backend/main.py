@@ -73,7 +73,7 @@ async def root():
 
 @app.get("/api/movies", response_model=list[Movie], tags=["Movies"], response_model_by_alias=False)
 async def get_movies(
-    status: str = None,
+    movie_status: str = None,
     genre: str = None,
     search: str = None,
     db=Depends(get_database)
@@ -82,7 +82,7 @@ async def get_movies(
     try:
         movies = await movie_crud.get_movies(
             db=db,
-            status=status,
+            status=movie_status,
             genre=genre,
             search=search
         )

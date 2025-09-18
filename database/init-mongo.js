@@ -1,14 +1,26 @@
   print("Starting database initialization...");
 
+  // Create admin user in admin database
+  db = db.getSiblingDB('admin');
+  db.createUser({
+    user: 'admin',
+    pwd: 'password123',
+    roles: [{ role: 'userAdminAnyDatabase', db: 'admin' }, { role: 'readWriteAnyDatabase', db: 'admin' }]
+  });
+
+  print("Admin user 'admin' created successfully");
+
+  // Switch to application database
   db = db.getSiblingDB('movie_watchlist');
 
+  // Create application user
   db.createUser({
-    user: 'app_user',
-    pwd: 'app_password',
+    user: 'username',
+    pwd: 'pass123',
     roles: [{ role: 'readWrite', db: 'movie_watchlist' }]
   });
 
-  print("Application user 'app_user' created successfully");
+  print("Application user 'username' created successfully");
 
   db.movies.createIndex({ "status": 1 });
   db.movies.createIndex({ "genre": 1 });

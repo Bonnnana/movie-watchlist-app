@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv(
     'DATABASE_URL', 
-    'mongodb://mongodb:27017/movie_watchlist'
+    'mongodb://username:pass123@movie-watchlist-mongodb:27017/movie_watchlist?authSource=movie_watchlist'
 )
 
 client: Optional[AsyncIOMotorClient] = None

@@ -6,8 +6,13 @@ services:
     container_name: movie-watchlist-mongodb
     ports:
       - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=movie_watchlist
     volumes:
       - mongodb_data:/data/db
+      - ./database/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     networks:
       - movie-watchlist-network
 
@@ -20,7 +25,9 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DATABASE_URL=${DATABASE_URL:-mongodb://movie-watchlist-mongodb:27017/movie_watchlist}  
+      - DATABASE_URL=${DATABASE_URL}
+      - MONGO_USERNAME=${MONGO_APP_USERNAME}
+      - MONGO_PASSWORD=${MONGO_APP_PASSWORD}
       - FRONTEND_URL=${FRONTEND_URL:-http://movie-watchlist-frontend:3000}
     depends_on:
       - mongodb
