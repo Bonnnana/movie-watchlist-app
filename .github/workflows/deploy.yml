@@ -57,7 +57,7 @@ jobs:
           fi
           
           # Check if frontend is responding
-          if curl -f http://${{ secrets.EC2_HOST }}:80; then
+          if curl -f http://${{ secrets.EC2_HOST }}:3000; then
             echo "Frontend is healthy"
           else
             echo "Frontend health check failed"
