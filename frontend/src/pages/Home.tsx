@@ -1,25 +1,28 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { Search, Filter, Plus } from 'lucide-react'
-import { movieApi } from '../services/api'
-import { Movie } from '../types/movie'
-import MovieCard from '../components/MovieCard'
-import toast from 'react-hot-toast'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import { Search, Filter, Plus } from "lucide-react";
+import { movieApi } from "../services/api";
+import { Movie } from "../types/movie";
+import MovieCard from "../components/MovieCard";
+import toast from "react-hot-toast";
 
 const Home: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
-  const [genreFilter, setGenreFilter] = useState('')
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [genreFilter, setGenreFilter] = useState("");
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const {
     data: moviesData,
     isLoading: moviesLoading,
     error: moviesError,
   } = useQuery(
-    ['movies', { status: statusFilter, genre: genreFilter, search: searchTerm }],
+    [
+      "movies",
+      { status: statusFilter, genre: genreFilter, search: searchTerm },
+    ],
     () =>
       movieApi.getMovies({
         status: statusFilter || undefined,
@@ -27,76 +30,74 @@ const Home: React.FC = () => {
         search: searchTerm || undefined,
       }),
     { keepPreviousData: true }
-  )
+  );
 
   const updateStatusMutation = useMutation<
-    Movie,               
-    unknown,              
-    { id: string; status: Movie['status'] } 
-  >(
-    ({ id, status }) => movieApi.updateMovie(id, { status }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('movies')
-        queryClient.invalidateQueries('movieStats')
-        toast.success('Movie status updated successfully!')
-      },
-      onError: () => {
-        toast.error('Failed to update movie status')
-      },
-    }
-  )
+    Movie,
+    unknown,
+    { id: string; status: Movie["status"] }
+  >(({ id, status }) => movieApi.updateMovie(id, { status }), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("movies");
+      queryClient.invalidateQueries("movieStats");
+      toast.success("Movie status updated successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to update movie status");
+    },
+  });
 
-  const deleteMovieMutation = useMutation<
-    { message: string },  
-    unknown,            
-    string                
-  >(
+  const deleteMovieMutation = useMutation<{ message: string }, unknown, string>(
     (id: string) => movieApi.deleteMovie(id),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('movies')
-        queryClient.invalidateQueries('movieStats')
-        toast.success('Movie deleted successfully!')
+        queryClient.invalidateQueries("movies");
+        queryClient.invalidateQueries("movieStats");
+        toast.success("Movie deleted successfully!");
       },
       onError: () => {
-        toast.error('Failed to delete movie')
+        toast.error("Failed to delete movie");
       },
     }
-  )
+  );
 
-  const handleStatusChange = (id: string, status: Movie['status']) => {
-    updateStatusMutation.mutate({ id, status })
-  }
+  const handleStatusChange = (id: string, status: Movie["status"]) => {
+    updateStatusMutation.mutate({ id, status });
+  };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this movie?')) {
-      deleteMovieMutation.mutate(id)
+    if (window.confirm("Are you sure you want to delete this movie?")) {
+      deleteMovieMutation.mutate(id);
     }
-  }
+  };
 
-  const movies: Movie[] = moviesData ?? []
+  const movies: Movie[] = moviesData ?? [];
 
   const uniqueGenres = Array.from(
     new Set(
       movies
         .map((m) => m.genre)
-        .filter((g): g is string => typeof g === 'string' && g.trim().length > 0)
+        .filter(
+          (g): g is string => typeof g === "string" && g.trim().length > 0
+        )
     )
-  ).sort((a, b) => a.localeCompare(b))
+  ).sort((a, b) => a.localeCompare(b));
 
   if (moviesError) {
-    console.error('Failed to load movies:', moviesError)
+    console.error("Failed to load movies:", moviesError);
     return (
       <div className="text-center py-12">
         <div className="text-red-600 text-lg mb-4">
           Failed to load movies. Please try again later.
         </div>
-        <button onClick={() => window.location.reload()} className="btn btn-primary">
+        <button
+          onClick={() => window.location.reload()}
+          className="btn btn-primary"
+        >
           Retry
         </button>
       </div>
-    )
+    );
   }
 
   return (
@@ -104,10 +105,10 @@ const Home: React.FC = () => {
       <div className="hero-section">
         <div className="hero-row">
           <div>
-
             <h1 className="hero-title">My Movie Watchlist</h1>
             <p className="hero-subtitle">
-              Because great movies deserve a list.            </p>
+              Because the great movies deserve a list.
+            </p>
           </div>
         </div>
 
@@ -118,7 +119,9 @@ const Home: React.FC = () => {
       </div>
 
       <div className="filter-section">
-        <h3 className="text-lg font-semibold text-slate-700 mb-4">Filter & Search</h3>
+        <h3 className="text-lg font-semibold text-slate-700 mb-4">
+          Filter & Search
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="form-group">
             <label className="form-label">Search Movies</label>
@@ -168,9 +171,9 @@ const Home: React.FC = () => {
           <div className="mt-4 pt-4 border-t border-slate-200">
             <button
               onClick={() => {
-                setSearchTerm('')
-                setStatusFilter('')
-                setGenreFilter('')
+                setSearchTerm("");
+                setStatusFilter("");
+                setGenreFilter("");
               }}
               className="btn btn-secondary text-sm"
             >
@@ -193,8 +196,8 @@ const Home: React.FC = () => {
           </div>
           <div className="text-slate-500 text-lg mb-4">
             {searchTerm || statusFilter || genreFilter
-              ? 'No movies match your current filters.'
-              : 'No movies in your watchlist yet.'}
+              ? "No movies match your current filters."
+              : "No movies in your watchlist yet."}
           </div>
           {!searchTerm && !statusFilter && !genreFilter && (
             <Link to="/add-movie" className="btn btn-primary no-underline">
@@ -204,7 +207,7 @@ const Home: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="movie-grid" style={{ marginTop: '12px' }}>
+        <div className="movie-grid" style={{ marginTop: "12px" }}>
           {movies.map((movie) => (
             <MovieCard
               key={movie.id}
@@ -218,12 +221,13 @@ const Home: React.FC = () => {
 
       {movies.length > 0 && (
         <div className="mt-8 text-center text-slate-600">
-          Showing {movies.length} movie{movies.length !== 1 ? 's' : ''}
-          {(searchTerm || statusFilter || genreFilter) && ' matching your filters'}
+          Showing {movies.length} movie{movies.length !== 1 ? "s" : ""}
+          {(searchTerm || statusFilter || genreFilter) &&
+            " matching your filters"}
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
