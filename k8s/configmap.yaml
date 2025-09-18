@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  DATABASE_URL: "mongodb://username:pass123@mongodb-service:27017/movie_watchlist?authSource=movie_watchlist"
+  FRONTEND_URL: "http://movie-watchlist-frontend:80"
+  VITE_API_URL: "/api"
