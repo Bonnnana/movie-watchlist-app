@@ -1,0 +1,65 @@
+name: Deploy to EC2
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker images to Docker Hub"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Debug EC2 Connection
+        run: |
+          echo "Testing connection to EC2..."
+          ping -c 3 ${{ secrets.EC2_HOST }} || echo "Ping failed"
+          nc -zv ${{ secrets.EC2_HOST }} 22 || echo "Port 22 not accessible"
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd '/home/ubuntu/movie-watchlist-app' 
+            
+            git pull origin main
+            
+            docker-compose pull
+            
+            docker-compose down
+            
+            docker-compose up -d
+            
+            docker image prune -f
+            
+            docker-compose ps
+
+      - name: Health Check
+        run: |
+          echo "Waiting for services to start..."
+          sleep 30
+          
+          # Check if backend is responding
+          if curl -f http://${{ secrets.EC2_HOST }}:5000/health; then
+            echo "Backend is healthy"
+          else
+            echo "Backend health check failed"
+            exit 1
+          fi
+          
+          # Check if frontend is responding
+          if curl -f http://${{ secrets.EC2_HOST }}:3000; then
+            echo "Frontend is healthy"
+          else
+            echo "Frontend health check failed"
+            exit 1
+          fi
