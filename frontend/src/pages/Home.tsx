@@ -107,7 +107,7 @@ const Home: React.FC = () => {
           <div>
             <h1 className="hero-title">My Movie Watchlist</h1>
             <p className="hero-subtitle">
-              Because the great movies deserve a list.
+              Because great movies deserve a list.
             </p>
           </div>
         </div>
