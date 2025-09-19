@@ -30,12 +30,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mongodb-secret
-              key: username
+              key: app-username
         - name: MONGO_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mongodb-secret
-              key: password
+              key: app-password
         - name: FRONTEND_URL
           valueFrom:
             configMapKeyRef:

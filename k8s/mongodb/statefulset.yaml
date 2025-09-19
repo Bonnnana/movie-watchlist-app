@@ -37,6 +37,16 @@ spec:
               key: password
         - name: MONGO_INITDB_DATABASE
           value: movie_watchlist
+        - name: MONGO_APP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: app-username
+        - name: MONGO_APP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: app-password
         volumeMounts:
         - name: mongodb-data
           mountPath: /data/db

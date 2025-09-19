@@ -10,13 +10,16 @@ data:
     
     db = db.getSiblingDB('movie_watchlist');
     
+    var appUsername = process.env.MONGO_APP_USERNAME;
+    var appPassword = process.env.MONGO_APP_PASSWORD';
+    
     db.createUser({
-      user: 'username',
-      pwd: 'pass123',
+      user: appUsername,
+      pwd: appPassword,
       roles: [{ role: 'readWrite', db: 'movie_watchlist' }]
     });
     
-    print("Application user 'username' created successfully");
+    print("Application user '" + appUsername + "' created successfully");
     
     // Create indexes for better performance
     db.movies.createIndex({ "status": 1 });
