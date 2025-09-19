@@ -11,7 +11,7 @@ data:
     db = db.getSiblingDB('movie_watchlist');
     
     var appUsername = process.env.MONGO_APP_USERNAME;
-    var appPassword = process.env.MONGO_APP_PASSWORD';
+    var appPassword = process.env.MONGO_APP_PASSWORD;
     
     db.createUser({
       user: appUsername,
